@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý nhân viên</title>
+    
+    <!-- Thêm CSS cho DataTables - Sử dụng Bootstrap 4 vì admin layout sử dụng Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+    
+    <style>
+        /* Thêm CSS để đảm bảo hiển thị đúng */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .btn-sm {
+            margin: 2px;
+        }
+        .badge-success {
+            color: #fff;
+            background-color: #28a745;
+        }
+        /* Đảm bảo bảng hiển thị đúng */
+        #staffTable {
+            width: 100% !important;
+        }
+        /* Đảm bảo các cột có độ rộng hợp lý */
+        .table th {
+            white-space: nowrap;
+        }
+        /* Thêm CSS cho hình ảnh CMND/CCCD */
+        .citizen-id-preview {
+            border: 2px solid #eee;
+            border-radius: 6px;
+            transition: box-shadow 0.2s;
+        }
+        .citizen-id-preview:hover {
+            box-shadow: 0 0 8px #007bff;
+            border-color: #007bff;
+        }
+        /* Modal hiển thị ảnh lớn */
+        .modal-image {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container-fluid">   
+        <h1 class="h3 mb-2 text-gray-800">Quản lý nhân viên</h1>
+        <p class="mb-4">Danh sách các nhân viên đã được duyệt từ đơn ứng tuyển.</p>
+
+        <!-- Thông báo -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Bảng nhân viên -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Danh sách nhân viên</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="staffTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <!-- <th>ID</th> -->
+                            <th>Họ tên</th>
+                            <th>Tuổi</th>
+                            <th>Giới tính</th>
+                            <th>Email</th>
+                            <th>Địa điểm</th>
+                            <th>Ngày tuyển</th>
+                            <th>Ảnh mặt trước</th>
+                            <th>Ảnh mặt sau</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${staffList.empty}">
+                            <td colspan="8" class="text-center">Không có nhân viên nào</td>
+                        </tr>
+                        <tr th:each="staff : ${staffList}">
+                            <!-- <td th:text="${staff.id}"></td> -->
+                            <td th:text="${staff.fullName}"></td>
+                            <td th:text="${staff.age}"></td>
+                            <td th:text="${staff.gender}"></td>
+                            <td th:text="${staff.email}"></td>
+                            <td th:text="${staff.location.name}"></td>
+                            <td th:text="${#temporals.format(staff.hireDate, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <img th:src="@{${staff.citizenIdFront}}" alt="Ảnh mặt trước" class="citizen-id-preview"
+                                     style="max-width: 80px; max-height: 80px; border-radius: 6px; cursor: pointer;"
+                                     onclick="showImageModal(this)">
+                            </td>
+                            <td>
+                                <img th:src="@{${staff.citizenIdBack}}" alt="Ảnh mặt sau" class="citizen-id-preview"
+                                     style="max-width: 80px; max-height: 80px; border-radius: 6px; cursor: pointer;"
+                                     onclick="showImageModal(this)">
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/staff/delete(id=${staff.id})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên này?')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    
+    <!-- Page level custom scripts -->
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo DataTable cho bảng nhân viên
+            $('#staffTable').DataTable({
+                "language": {
+                    "lengthMenu": "Hiển thị _MENU_ dòng mỗi trang",
+                    "zeroRecords": "Không tìm thấy dữ liệu",
+                    "info": "Trang _PAGE_ / _PAGES_",
+                    "infoEmpty": "Không có dữ liệu",
+                    "infoFiltered": "(lọc từ _MAX_ dòng)",
+                    "search": "Tìm kiếm:",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Sau",
+                        "previous": "Trước"
+                    }
+                },
+                "responsive": true
+            });
+            
+            console.log('DataTable initialized');
+        });
+
+        function showImageModal(img) {
+            var modalImg = document.getElementById('modalImage');
+            modalImg.src = img.src;
+            $('#imageModal').modal('show');
+        }
+    </script>
+
+    <!-- Modal hiển thị ảnh lớn -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <img id="modalImage" src="" alt="Ảnh lớn" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Liên Hệ - Tropical Favorites</title>
+
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container">
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+    </div>
+    <!-- Start Contact Section -->
+    <div class="contact-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-7 mx-auto text-center">
+                    <h2 class="section-title">Contact Us</h2>
+                    <p class="section-subtitle">Have questions about our fitness programs or membership? We're here to help!</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Contact Form -->
+                <div class="col-lg-6 mb-5"> 
+                    <div class="contact-form">
+                        <h3 class="form-title">Send Message</h3>
+                        <form th:action="@{/system/feedback}" method="post">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Nhập họ và tên" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Nội dung</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Nhập nội dung phản hồi" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-6 mb-5">
+                    <div class="contact-info">
+                        <h3 class="info-title">Contact Information</h3>
+                        <ul class="list-unstyled">
+                            <li class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Fitness Street, District 1, Ho Chi Minh City</span>
+                            </li>
+                            <li class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>(028) 1234-5678</span>
+                            </li>
+                            <li class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>contact@fitnessgym.com</span>
+                            </li>
+                            <li class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Open 24/7 for Members</span>
+                            </li>
+                        </ul>
+                        <div class="social-links mt-4">
+                            <h4>Follow Us</h4>
+                            <a href="https://facebook.com" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://instagram.com" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <a href="https://twitter.com" target="_blank" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Contact Section -->
+
+    <!-- Start Map Section -->
+    <div class="map-section">
+        <div class="container">
+            <div class="row mb-7">
+                <div class="col-lg-7 mx-auto text-center">
+                    <h2 class="section-title">Find Us on the Map</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4479799999997!2d106.69875531474895!3d10.776389692319!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f38f8f3d7df%3A0x5c7e7a2f4b7b1c!2sHo%20Chi%20Minh%20City!5e0!3m2!1sen!2s!4v1698765432100!5m2!1sen!2s"
+                            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Map Section -->
+</section>
+</body>
+</html>

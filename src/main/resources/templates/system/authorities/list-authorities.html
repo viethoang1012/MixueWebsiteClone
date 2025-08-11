@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{system/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Quyền</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-sm-12">
+                    <!-- Hiển thị thông báo lỗi (nếu có) -->
+                    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <!-- Hiển thị thông báo thành công (nếu có) -->
+                    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <h1>Quản Lý Quyền</h1>
+                    <hr>
+                    <a th:href="@{/authorities/authorities-form}">
+                        <button class="btn btn-secondary mb-3">Thêm Quyền</button>
+                    </a>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">id</th>
+                            <th scope="col">Tên Người Dùng</th>
+                            <th scope="col">Quyền</th>
+                            <th scope="col">Hành Động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="authorities : ${authorities}">
+                            <td th:text="${authorities.id}"></td>
+                            <td th:text="${authorities.username}"></td>
+                            <td th:text="${authorities.authority}"></td>
+                            <td>
+                                <!-- Nút Cập nhật -->
+                                <a th:href="@{/authorities/authorities-form-update(id=${authorities.id})}"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="fa-solid fa-edit"></i> Chỉnh sửa
+                                </a>
+                                <a th:href="@{/authorities/delete(id=${authorities.id})}"
+                                   class="btn btn-sm btn-danger ms-2"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa quyền này?')">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(authorities)}">
+                            <td colspan="3" class="text-center">Không có quyền nào.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

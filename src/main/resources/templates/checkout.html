@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" th:href="@{/default/css/checkout.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="checkout">
+        <h2><i class="fas fa-shopping-cart"></i> Xác nhận đơn hàng</h2>
+        <form th:action="@{/checkout}" method="post" id="checkout-form">
+            <div class="checkout-container">
+                <!-- Giao hàng -->
+                <div class="delivery-info">
+                    <h3><i class="fas fa-truck"></i> Thông tin giao hàng</h3>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="name" placeholder="Tên người nhận" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" name="phone" placeholder="Số điện thoại" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" name="address" placeholder="Địa chỉ giao hàng" required />
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-info-circle"></i>
+                        <input type="text" name="deliveryInstructions" placeholder="Ghi chú giao hàng" />
+                    </div>
+                    
+                    <!-- Phương thức thanh toán -->
+                    <div class="payment-methods">
+                        <h4><i class="fas fa-credit-card"></i> Phương thức thanh toán</h4>
+                        <div class="payment-option">
+                            <input type="radio" id="cod" name="paymentMethod" value="COD" checked>
+                            <label for="cod">Thanh toán khi nhận hàng (COD)</label>
+                        </div>
+                        <div class="payment-option">
+                            <input type="radio" id="bank" name="paymentMethod" value="BANK">
+                            <label for="bank">Chuyển khoản ngân hàng</label>
+                        </div>
+                        <div id="bank-info" class="bank-info" style="display: none;">
+                            <p><strong>Thông tin chuyển khoản:</strong></p>
+                            <p>Ngân hàng: VietTinBank</p>
+                            <p>Số tài khoản: 103609750927</p>
+                            <p>Chủ tài khoản: Nguyen Viet Hoang</p>
+                            <p>Nội dung: [Tên của bạn] - [Số điện thoại]</p>
+                            <p>Mã QR: <img class="qr-code" src="/default/images/QR%20Code.png" alt="QR Code"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Các món đã chọn -->
+                <div class="order-info">
+                    <h3><i class="fas fa-list-alt"></i> Các món đã chọn</h3>
+                    <div th:each="item : ${cartItems}" class="order-item">
+                        <div class="item-details">
+                            <img th:src="${item.product.imageUrl}" alt="Product Image" class="item-image">
+                            <div class="item-info">
+                                <h4 th:text="${item.product.name}"></h4>
+                                <p th:text="${item.product.description}"></p>
+                                <span class="item-quantity" th:text="'Số lượng: ' + ${item.quantity}"></span>
+                            </div>
+                        </div>
+                        <span class="item-price" th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                    </div>
+                </div>
+                
+                <!-- Tổng cộng -->
+                <div class="total-info">
+                    <h3><i class="fas fa-calculator"></i> Tổng cộng</h3>
+                    <div class="total-details">
+                        <div>
+                            <span>Thành tiền</span>
+                            <span th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                        </div>
+                        <div>
+                            <span>Phí giao hàng</span>
+                            <span th:text="${#numbers.formatDecimal(deliveryFee, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                        </div>
+                        <div>
+                            <span>Khuyến mãi</span>
+                            <span th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                        </div>
+                        <div class="final-total">
+                            <span>Thành tiền</span>
+                            <span th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="confirm-order">
+                        <div class="order-agreement">
+                            <input type="checkbox" id="agreement" required>
+                            <label for="agreement">Tôi đồng ý với <a href="#">điều khoản dịch vụ</a> và <a href="#">chính sách bảo mật</a></label>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i> Đặt hàng</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const codRadio = document.getElementById('cod');
+            const bankRadio = document.getElementById('bank');
+            const bankInfo = document.getElementById('bank-info');
+            
+            codRadio.addEventListener('change', function() {
+                bankInfo.style.display = 'none';
+            });
+            
+            bankRadio.addEventListener('change', function() {
+                bankInfo.style.display = 'block';
+            });
+        });
+    </script>
+</section>
+</body>
+</html>

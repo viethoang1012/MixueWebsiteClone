@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{default/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mixue Gần Đây</title>
+    <link rel="stylesheet" th:href="@{/default/css/location.css}" />
+    <link rel="stylesheet" th:href="@{/default/css/location_mixue.css}" />
+</head>
+
+<body>
+    <section class="main-location-container" layout:fragment="main-content">
+        <section class="mixue-near">
+            <h2 class="near-title">Mixue Gần Đây</h2>
+            <div class="near-grid">
+                <div class="near-card" th:each="location : ${locations}"
+                    th:onclick="'window.location.href=\'/location/' + ${location.id} + '\''" style="cursor:pointer;">
+                    <div class="near-image">
+                        <img th:if="${location.image != null}" th:src="${location.image}" alt="Ảnh" style="width:100%;height:auto;">
+                        <!-- <img th:src="@{'/images/' + ${location.image}}" th:alt="${location.name}" -->
+                        <div class="near-tag">MIXUE TUYỂN DỤNG</div>
+                        <div class="near-logo">
+                            <img src="/default/images/logo-mixue.png" alt="Mixue Logo">
+                        </div>
+                    </div>
+                    <div class="near-content">
+                        <h3 th:text="${location.name}"></h3>
+                        <p th:text="${location.description}"></p>
+                        <a th:href="@{'/location/' + ${location.id}}" class="near-button">XEM NGAY</a>
+                        <div class="near-info">
+                            <span>Mixue Việt Nam</span>
+                            <span>31/07/2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</body>
+
+</html>

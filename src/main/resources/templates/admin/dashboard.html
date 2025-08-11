@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+    <section layout:fragment="main-content">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Tạo báo cáo
+            </a> -->
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Đơn hàng mới Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Đơn hàng mới</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${newOrdersCount ?: '0'}">150</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-primary stretched-link" href="/orders/list-orders">Xem chi tiết</a>
+                        <div class="small text-primary"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tỷ lệ đánh giá tốt Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tỷ lệ đánh giá tốt</div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" th:text="${goodReviewRate ?: '53%'}">53%</div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="progress progress-sm mr-2">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 53%" aria-valuenow="53" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-star fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-success stretched-link" href="/admin/reviews">Xem chi tiết</a>
+                        <div class="small text-success"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Đơn ứng tuyển Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Đơn ứng tuyển</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${applicationCount ?: '44'}">44</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-warning stretched-link" href="/admin/job-applications">Xem chi tiết</a>
+                        <div class="small text-warning"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Khách hàng mới Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <!-- <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Khách hàng mới</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${newCustomersCount ?: '65'}">65</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-danger stretched-link" href="/customers/list-customers">Xem chi tiết</a>
+                        <div class="small text-danger"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Area Chart -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Tổng quan doanh thu</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Tùy chọn:</div>
+                                <a class="dropdown-item" href="#">Theo ngày</a>
+                                <a class="dropdown-item" href="#">Theo tuần</a>
+                                <a class="dropdown-item" href="#">Theo tháng</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Tải báo cáo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="myAreaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Phân loại sản phẩm</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Tùy chọn:</div>
+                                <a class="dropdown-item" href="#">Theo danh mục</a>
+                                <a class="dropdown-item" href="#">Theo giá</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Tải báo cáo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> Trà sữa
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> Kem
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> Đồ ăn
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Bar Chart -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Doanh số theo cửa hàng</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Tùy chọn:</div>
+                                <a class="dropdown-item" href="#">Theo tháng</a>
+                                <a class="dropdown-item" href="#">Theo quý</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Tải báo cáo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-bar">
+                            <canvas id="myBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Đơn hàng gần đây</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Khách hàng</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${recentOrders}" th:if="${recentOrders != null}">
+                                        <td th:text="${order.id}">1</td>
+                                        <td th:text="${order.customerName}">Nguyễn Văn A</td>
+                                        <td th:text="${#numbers.formatDecimal(order.total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">150,000 ₫</td>
+                                        <td>
+                                            <span th:class="${order.status == 'Đã giao' ? 'badge badge-success' : (order.status == 'Đang giao' ? 'badge badge-warning' : 'badge badge-secondary')}" 
+                                                  th:text="${order.status}">Đã giao</span>
+                                        </td>
+                                    </tr>
+                                    <!-- Dữ liệu mẫu khi không có dữ liệu thực -->
+                                    <tr th:unless="${recentOrders != null}">
+                                        <td>1</td>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>150,000 ₫</td>
+                                        <td><span class="badge badge-success">Đã giao</span></td>
+                                    </tr>
+                                    <tr th:unless="${recentOrders != null}">
+                                        <td>2</td>
+                                        <td>Trần Thị B</td>
+                                        <td>250,000 ₫</td>
+                                        <td><span class="badge badge-warning">Đang giao</span></td>
+                                    </tr>
+                                    <tr th:unless="${recentOrders != null}">
+                                        <td>3</td>
+                                        <td>Lê Văn C</td>
+                                        <td>180,000 ₫</td>
+                                        <td><span class="badge badge-secondary">Chờ xác nhận</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Thêm script để tùy chỉnh biểu đồ -->
+    <script th:inline="javascript">
+        // Dữ liệu cho biểu đồ tròn - phân loại sản phẩm
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tùy chỉnh biểu đồ tròn
+            var ctx = document.getElementById("myPieChart");
+            var myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ["Trà sữa", "Kem", "Đồ ăn"],
+                    datasets: [{
+                        data: [55, 30, 15],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                    },
+                    legend: {
+                        display: false
+                    },
+                    cutoutPercentage: 80,
+                },
+            });
+
+            // Tùy chỉnh biểu đồ cột - doanh số theo cửa hàng
+            var ctx = document.getElementById("myBarChart");
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Quận 1", "Quận 2", "Quận 3", "Quận 5", "Quận 7", "Quận 10"],
+                    datasets: [{
+                        label: "Doanh thu",
+                        backgroundColor: "#4e73df",
+                        hoverBackgroundColor: "#2e59d9",
+                        borderColor: "#4e73df",
+                        data: [4215, 5312, 6251, 7841, 9821, 14984],
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'month'
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 6
+                            },
+                            maxBarThickness: 25,
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: 15000,
+                                maxTicksLimit: 5,
+                                padding: 10,
+                                // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                    return number_format(value) + ' ₫';
+                                }
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': ' + number_format(tooltipItem.yLabel) + ' ₫';
+                            }
+                        }
+                    },
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Mixue - Thức Uống Ngon</title>
+    <link rel="stylesheet" th:href="@{/default/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<section layout:fragment="main-content">
+    <!-- Start Shop Section -->
+    <div class="shop-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-7 mx-auto text-center">
+                    <h2 class="section-title">Mixue Việt Nam</h2>
+                    <p class="section-subtitle">Thức uống ngon - Giá cả hợp lý!</p>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="category-filter text-center mb-4">
+                <button class="filter-btn" 
+                        th:classappend="${category == null ? 'active' : ''}" 
+                        onclick="window.location.href='/shop'">Tất cả</button>
+                <button class="filter-btn" 
+                        th:classappend="${category == 'Kem' ? 'active' : ''}" 
+                        onclick="window.location.href='/shop?category=Kem'">Kem</button>
+                <button class="filter-btn" 
+                        th:classappend="${category == 'Trà Sữa' ? 'active' : ''}" 
+                        onclick="window.location.href='/shop?category=Trà+Sữa'">Trà Sữa</button>
+            </div>
+
+            <!-- Phần Danh Sách Sản Phẩm -->
+            <section class="products">
+                <div class="product-grid">
+                    <div class="product-card" th:each="product : ${products}">
+                        <!-- Badge cho Kem -->
+                        <div class="product-badge" th:if="${product.category == 'Kem'}">Kem Mixue</div>
+                        <!-- Badge cho Trà Sữa -->
+                        <div class="product-badge tra-sua" th:if="${product.category == 'Trà Sữa'}">Trà Sữa</div>
+                        
+                        <a th:href="@{/detail-products(id=${product.id})}" class="product-link">
+                            <div class="product-image-container">
+                                <img th:src="@{${product.imageUrl}}"
+                                     alt="Ảnh sản phẩm"
+                                     class="product-image"
+                                     onerror="this.onerror=null;this.src='/images/default-drink.jpg';" />
+                            </div>
+                            <div class="product-info">
+                                <!-- Hiển thị thương hiệu dựa trên danh mục -->
+                                <div class="product-brand" th:text="${product.category == 'Kem' ? 'Kem Mixue' : 'Trà Sữa Mixue'}">Thương hiệu</div>
+                                <h3 class="product-name" th:text="${product.name}">Tên Sản Phẩm</h3>
+                                <div class="product-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <p class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + 'đ'">Giá</p>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Thông báo nếu không có sản phẩm -->
+                    <div th:if="${products == null or products.isEmpty()}" class="text-center">
+                        <p>Không tìm thấy sản phẩm.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- End Shop Section -->
+</section>
+</body>
+</html>

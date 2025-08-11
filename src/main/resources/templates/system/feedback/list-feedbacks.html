@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{system/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Feedback</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .badge-danger {
+            color: #fff;
+            background-color: #dc3545;
+        }
+        .badge-success {
+            color: #fff;
+            background-color: #28a745;
+        }
+        .badge-warning {
+            color: #212529;
+            background-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-2 text-gray-800">Quản lý Feedback</h1>
+        <p class="mb-4">Danh sách các feedback từ người dùng.</p>
+
+        <!-- Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+            
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Unread Feedbacks -->
+            <div class="tab-pane fade show active" id="unread" role="tabpanel" aria-labelledby="unread-tab">
+                <div class="card shadow mb-4 mt-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Feedback chưa đọc</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="unreadTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                    <th>Nội dung</th>
+                                    <th>Ngày gửi</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${unreadFeedbacks == null || unreadFeedbacks.empty}">
+                                    <td colspan="5" class="text-center">Không có feedback nào chưa đọc</td>
+                                </tr>
+                                <tr th:each="fb : ${unreadFeedbacks}">
+                                    <td th:text="${fb.name}"></td>
+                                    <td th:text="${fb.email}"></td>
+                                    <td th:text="${fb.message}"></td>
+                                    <td th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td class="action-buttons">
+                                        <a th:href="@{/system/feedback/mark-as-read(id=${fb.id})}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Đánh dấu đã đọc
+                                        </a>
+                                        <a th:href="@{/system/feedback/delete(id=${fb.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa feedback này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Read Feedbacks -->
+            <div class="tab-pane fade" id="read" role="tabpanel" aria-labelledby="read-tab">
+                <div class="card shadow mb-4 mt-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Feedback đã đọc</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="readTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                    <th>Nội dung</th>
+                                    <th>Ngày gửi</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${readFeedbacks == null || readFeedbacks.empty}">
+                                    <td colspan="5" class="text-center">Không có feedback nào đã đọc</td>
+                                </tr>
+                                <tr th:each="fb : ${readFeedbacks}">
+                                    <td th:text="${fb.name}"></td>
+                                    <td th:text="${fb.email}"></td>
+                                    <td th:text="${fb.message}"></td>
+                                    <td th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td>
+                                        <a th:href="@{/system/feedback/delete-read(id=${fb.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa feedback này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Feedbacks -->
+            <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="all-tab">
+                <div class="card shadow mb-4 mt-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Tất cả Feedback</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="allTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                    <th>Nội dung</th>
+                                    <th>Ngày gửi</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${allFeedbacks == null || allFeedbacks.empty}">
+                                    <td colspan="6" class="text-center">Không có feedback nào</td>
+                                </tr>
+                                <tr th:each="fb : ${allFeedbacks}">
+                                    <td th:text="${fb.name}"></td>
+                                    <td th:text="${fb.email}"></td>
+                                    <td th:text="${fb.message}"></td>
+                                    <td th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td>
+                                        <span th:if="${fb.isRead}" class="badge badge-success">Đã đọc</span>
+                                        <span th:unless="${fb.isRead}" class="badge badge-danger">Chưa đọc</span>
+                                    </td>
+                                    <td class="action-buttons">
+                                        <a th:if="${!fb.isRead}" th:href="@{/system/feedback/mark-as-read(id=${fb.id})}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Đánh dấu đã đọc
+                                        </a>
+                                        <!-- Conditional Delete Button -->
+                                        <a th:if="${!fb.isRead}" th:href="@{/system/feedback/delete(id=${fb.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa feedback này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                        <a th:if="${fb.isRead}" th:href="@{/system/feedback/delete-read(id=${fb.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa feedback này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#unreadTable, #readTable, #allTable').DataTable({
+                "language": {"url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"},
+                "order": [[3, 'desc']]
+            });
+             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+            });
+        });
+    </script>
+</section>
+</body>
+</html> 

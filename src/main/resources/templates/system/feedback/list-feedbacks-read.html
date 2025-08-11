@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{system/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách phản hồi đã đọc</title>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container">
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+        <div class="row">
+            <div class="col-12">
+                <h2 class="page-title">Danh sách phản hồi đã đọc</h2>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Phản hồi đã đọc</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>Tên</th>
+                            <th>Email</th>
+                            <th>Nội dung</th>
+                            <th>Ngày gửi</th>
+                            <th>Ngày đọc</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${readFeedbacks == null || readFeedbacks.empty}">
+                            <td colspan="6" class="text-center">Không có phản hồi nào đã đọc</td>
+                        </tr>
+                        <tr th:each="fb : ${readFeedbacks}">
+                            <td th:text="${fb.name}"></td>
+                            <td th:text="${fb.email}"></td>
+                            <td th:text="${fb.message}"></td>
+                            <td th:text="${#temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${#temporals.format(fb.readAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td class="action-buttons">
+                                <a th:href="@{/system/feedback/delete-read(id=${fb.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa phản hồi này?')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

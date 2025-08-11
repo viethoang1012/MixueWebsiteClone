@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <link rel="stylesheet" th:href="@{/default/css/header.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<header>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <!-- Logo và Brand -->
+            <div class="left-section">
+                <a class="navbar-brand" href="/">
+                    <img th:src="@{/default/images/logo-mixue.png}" alt="Mixue" class="logo-img">
+                    <span class="brand-text">Mixue</span>
+                </a>
+                
+                <!-- Thanh điều hướng chính -->
+                <div class="nav-menu">
+                    <a class="nav-link" href="/">TRANG CHỦ</a>
+                    <a class="nav-link" href="/about">VỀ CHÚNG TÔI</a>
+                    <a class="nav-link" href="/shop">MIXUE MENU</a>
+                    <a class="nav-link" href="/location">MIXUE TUYỂN DỤNG</a>
+                    <a class="nav-link" href="/contact">LIÊN HỆ</a>
+                </div>
+            </div>
+
+            <!-- Phần bên phải của navbar -->
+            <div class="right-section">
+                <!-- Hiển thị thông tin người dùng -->
+                <div sec:authorize="isAuthenticated()" class="user-greeting">
+                    <span>Xin chào, <span sec:authentication="name" class="username"></span></span>
+                </div>
+                
+                <div class="user-actions">
+                    <!-- Nút System và Admin cho ROLE_SYSTEM -->
+                    <div sec:authorize="hasRole('ROLE_SYSTEM')" class="admin-actions">
+                        <a href="http://localhost:8080/system" class="btn btn-system">
+                            <i class="fa-solid fa-lock"></i>
+                            <span>SYSTEM</span>
+                        </a>
+                        <a href="http://localhost:8080/admin" class="btn btn-admin">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>ADMIN</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Chỉ nút Admin cho ROLE_ADMIN -->
+                    <div sec:authorize="hasRole('ROLE_ADMIN') and !hasRole('ROLE_SYSTEM')" class="admin-actions">
+                        <a href="http://localhost:8080/admin" class="btn btn-admin">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>ADMIN</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Giỏ hàng -->
+                    <a href="/cart" class="btn btn-cart">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>GIỎ HÀNG</span>
+                        <span class="cart-badge" th:text="${cartItemCount}">0</span>
+                    </a>
+
+                    <!-- Đăng xuất -->
+                    <a sec:authorize="isAuthenticated()" href="/logout" class="btn btn-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>ĐĂNG XUẤT</span>
+                    </a>
+                </div>
+                
+                <!-- Nút đăng nhập khi chưa xác thực -->
+                <div sec:authorize="!isAuthenticated()" class="login-action">
+                    <a href="/login" class="btn btn-login">
+                        <i class="fa-solid fa-sign-in-alt"></i>
+                        <span>ĐĂNG NHẬP</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+</html>

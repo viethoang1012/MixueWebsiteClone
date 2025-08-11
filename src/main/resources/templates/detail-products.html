@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{default/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết Mixue</title>
+    <link rel="stylesheet" th:href="@{/default/css/detail-products.css}" />
+    <title th:text="${product.name} + ' - Tropical Favorites'">Chi Tiết Sản Phẩm - Tropical Favorites</title>
+</head>
+
+<section layout:fragment="main-content">
+    <!-- Start Product Detail Section -->
+    <div class="product-detail-section">
+        <div class="container">
+            <!-- Thông báo nếu không tìm thấy sản phẩm -->
+            <div th:if="${product == null}" class="text-center">
+                <h2>Sản phẩm không tồn tại</h2>
+                <a th:href="@{/products/list-products}" class="btn btn-primary">Quay lại Cửa Hàng</a>
+            </div>
+
+            <!-- Hiển thị chi tiết sản phẩm -->
+            <div th:if="${product != null}" class="row">
+                <!-- Hình ảnh sản phẩm -->
+                <div class="product-detail_imgage col-lg-6 mb-4">
+                    <img th:src="@{${product.imageUrl}}"
+                         alt="Ảnh sản phẩm"
+                         class="product-image img-fluid mb-3"
+                         style="max-width:600px;"
+                         onerror="this.onerror=null;this.src='/images/default-drink.jpg';" />
+                </div>
+
+                <!-- Thông tin sản phẩm -->
+                <div class="col-lg-6">
+                    <h2 class="product-title" th:text="${product.name}">Tên Sản Phẩm</h2>
+                    <p class="product-price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá</p>
+                    <div class="product-content">
+                        <h4>Mô Tả Sản Phẩm</h4>
+                        <p th:text="${product.content}">Mô tả sản phẩm</p>
+                    </div>
+                    <div class="product-description">
+                        <h4>Chi Tiết Sản Phẩm</h4>
+                        <p th:text="${product.description}">Chi tiết sản phẩm</p>
+                    </div>
+                    <div class="product-actions">
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}" />
+                            <input type="number" name="quantity" value="1" min="1" />
+                            <button type="submit" class="btn btn-order">Thêm vào Giỏ Hàng</button>
+                        </form>
+                        <a th:href="@{/index}" class="btn btn-back">Quay lại Cửa Hàng</a>
+                    </div>
+                </div>
+                
+                <!-- Phần đánh giá sản phẩm -->
+                <div class="col-12 mt-5">
+                    <!-- Thêm ngay sau phần mở đầu của product-reviews -->
+                    <div class="product-reviews">
+                        <h3>Đánh giá sản phẩm</h3>
+                        
+                        <!-- Thông báo thành công/lỗi -->
+                        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                            <span th:text="${successMessage}"></span>
+                        </div>
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                            <span th:text="${errorMessage}"></span>
+                        </div>
+                        
+                        <!-- Form thêm đánh giá mới -->
+                        <div class="review-form-container mb-4" sec:authorize="isAuthenticated()">
+                            <h4>Để lại đánh giá của bạn</h4>
+                            <form th:action="@{/review/add}" method="post" th:object="${review}">
+                                <input type="hidden" name="productId" th:value="${product.id}" />
+                                
+                                <div class="form-group">
+                                    <label for="userName">Tên của bạn</label>
+                                    <input type="text" class="form-control" id="userName" th:field="*{userName}" required />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="userEmail">Email</label>
+                                    <input type="email" class="form-control" id="userEmail" th:field="*{userEmail}" required />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Đánh giá</label>
+                                    <div class="rating-input">
+                                        <div class="star-rating">
+                                            <div class="form-check form-check-inline" th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <input class="form-check-input" type="radio" th:field="*{rating}" th:value="${i}" th:id="'rating' + ${i}" required />
+                                                <label class="form-check-label" th:for="'rating' + ${i}">
+                                                    <i class="fas fa-star"></i>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="content">Nội dung đánh giá</label>
+                                    <textarea class="form-control" id="content" th:field="*{content}" rows="4" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Hiển thị thông báo đăng nhập nếu chưa đăng nhập -->
+                        <div class="review-login-message mb-4" sec:authorize="!isAuthenticated()">
+                            <div class="alert alert-info">
+                                <p>Vui lòng <a th:href="@{/login}">đăng nhập</a> để để lại đánh giá của bạn.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Hiển thị danh sách đánh giá -->
+                        <div class="reviews-list">
+                            <h4>Các đánh giá về sản phẩm</h4>
+                            
+                            <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info">
+                                Chưa có đánh giá nào cho sản phẩm này.
+                            </div>
+                            
+                            <div th:each="review : ${reviews}" class="review-item card mb-3">
+                                <div class="card-body">
+                                    <div class="review-header d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="card-title" th:text="${review.userName}">Người đánh giá</h5>
+                                            <div class="rating">
+                                                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                                    <i class="fas fa-star" th:classappend="${i <= review.rating ? 'text-warning' : 'text-secondary'}"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}">Ngày đánh giá</small>
+                                    </div>
+                                    <p class="card-text mt-2" th:text="${review.content}">Nội dung đánh giá</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Product Detail Section -->
+</section>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đánh giá</title>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <div class="container-fluid">   
+        <h1 class="h3 mb-2 text-gray-800">Quản lý đánh giá</h1>
+        <p class="mb-4">Danh sách các đánh giá chưa đọc từ khách hàng.</p>
+
+        <!-- Thông báo -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Bảng đánh giá -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Đánh giá chưa đọc</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sản phẩm</th>
+                            <th>Người đánh giá</th>
+                            <th>Đánh giá</th>
+                            <th>Nội dung</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="review : ${reviews}">
+                            <td th:text="${review.id}"></td>
+                            <td>
+                                <a th:href="@{/detail-products(id=${review.product.id})}" th:text="${review.product.name}"></a>
+                            </td>
+                            <td th:text="${review.userName}"></td>
+                            <td>
+                                <div class="rating">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i class="fas fa-star" th:classappend="${i <= review.rating ? 'text-warning' : 'text-secondary'}"></i>
+                                    </span>
+                                </div>
+                            </td>
+                            <td th:text="${review.content}"></td>
+                            <td th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td>
+                                <a th:href="@{/admin/reviews/mark-as-read(id=${review.id})}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check"></i> Đánh dấu đã đọc
+                                </a>
+                                <a th:href="@{/admin/reviews/approve(id=${review.id})}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-thumbs-up"></i> Duyệt lên trang chủ
+                                </a>
+                                <a th:href="@{/admin/reviews/delete(id=${review.id})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

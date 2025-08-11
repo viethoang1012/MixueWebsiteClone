@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn ứng tuyển</title>
+    
+    <!-- Thêm CSS cho DataTables - Sử dụng Bootstrap 4 vì admin layout sử dụng Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
+    
+    <style>
+        /* Thêm CSS để đảm bảo hiển thị đúng */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+        .btn-sm {
+            margin: 2px;
+        }
+        .badge-danger {
+            color: #fff;
+            background-color: #dc3545;
+        }
+        .badge-warning {
+            color: #212529;
+            background-color: #ffc107;
+        }
+        .badge-success {
+            color: #fff;
+            background-color: #28a745;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #4e73df;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+        }
+        .nav-tabs .nav-link.active {
+            color: #6e707e;
+            background-color: #fff;
+            border-bottom: 3px solid #4e73df;
+        }
+        .tab-content {
+            padding-top: 1rem;
+        }
+        /* Thêm CSS để đảm bảo các nút hành động hiển thị đúng */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        /* Đảm bảo bảng hiển thị đúng */
+        #unreadTable, #allTable {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+        /* Đảm bảo các cột có độ rộng hợp lý */
+        .table th {
+            white-space: nowrap;
+        }
+        /* Sửa lỗi bóp méo */
+        .container-fluid {
+            padding-right: 15px;
+            padding-left: 15px;
+            width: 100%;
+        }
+        /* Đảm bảo các cột có độ rộng phù hợp */
+        .table th, .table td {
+            vertical-align: middle !important;
+            word-wrap: break-word;
+            min-width: unset !important;
+            white-space: normal !important;
+        }
+        
+        /* Thêm CSS mới để đảm bảo văn bản nút luôn hiển thị */
+        .btn-sm i {
+            margin-right: 5px;
+        }
+        .btn-sm {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        /* Đảm bảo văn bản sau biểu tượng luôn hiển thị */
+        .btn-sm i + span, .btn-sm i + text {
+            display: inline-block !important;
+            margin-left: 5px;
+            white-space: nowrap;
+        }
+        /* Tăng độ rộng cột hành động */
+        .table th:last-child, .table td:last-child {
+            min-width: 200px;
+        }
+        .citizen-id-preview {
+            border: 2px solid #eee;
+            border-radius: 6px;
+            transition: box-shadow 0.2s;
+        }
+        .citizen-id-preview:hover {
+            box-shadow: 0 0 8px #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="main-content">
+    <!-- Thêm vào phần đầu của nội dung chính -->
+    <div class="container-fluid">   
+        <h1 class="h3 mb-2 text-gray-800">Quản lý đơn ứng tuyển</h1>
+        <p class="mb-4">Danh sách các đơn ứng tuyển từ ứng viên.</p>
+    
+        <!-- Thông báo lỗi cải tiến -->
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <h5 class="alert-heading">Lỗi truy cập!</h5>
+            <p th:text="${errorMessage}"></p>
+            <hr>
+            <p class="mb-0">Vui lòng kiểm tra kết nối cơ sở dữ liệu hoặc liên hệ quản trị viên.</p>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${infoMessage}" class="alert alert-info" role="alert">
+            <span th:text="${infoMessage}"></span>
+        </div>
+    
+        <!-- Phần còn lại của trang -->
+        <!-- Nav tabs - Sử dụng data-toggle cho Bootstrap 4 -->
+        <ul class="nav nav-tabs" id="applicationTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="unread-tab" data-toggle="tab" href="#unread" role="tab" aria-controls="unread" aria-selected="true">
+                    Đơn chưa đọc
+                    <span th:if="${unreadApplications != null && !unreadApplications.empty}" class="badge badge-danger" th:text="${unreadApplications.size()}"></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="false">
+                    Tất cả đơn
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="staff-tab" href="/admin/staff">
+                    Quản lý nhân viên
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Đơn chưa đọc -->
+            <div class="tab-pane fade show active" id="unread" role="tabpanel" aria-labelledby="unread-tab">
+                <div class="card shadow mb-4 mt-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Đơn ứng tuyển chưa đọc</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="unreadTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Họ tên</th>
+                                    <th>Tuổi</th>
+                                    <th>Giới tính</th>
+                                    <th>Email</th>
+                                    <th>Địa điểm</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Ảnh mặt trước</th>
+                                    <th>Ảnh mặt sau</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${unreadApplications == null || unreadApplications.empty}">
+                                    <td colspan="8" class="text-center">Không có đơn ứng tuyển chưa đọc</td>
+                                </tr>
+                                <tr th:if="${unreadApplications != null}" th:each="jobApp : ${unreadApplications}">
+                                    <td th:text="${jobApp.fullName}"></td>
+                                    <td th:text="${jobApp.age}"></td>
+                                    <td th:text="${jobApp.gender}"></td>
+                                    <td th:text="${jobApp.email}"></td>
+                                    <td th:text="${jobApp.location != null ? jobApp.location.name : 'N/A'}"></td>
+                                    <td th:text="${#temporals.format(jobApp.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td>
+                                        <img th:src="@{${jobApp.citizenIdFront}}" alt="Ảnh mặt trước" style="max-width:80px;cursor:pointer" onclick="showImageModal(this)">
+                                    </td>
+                                    <td>
+                                        <img th:src="@{${jobApp.citizenIdBack}}" alt="Ảnh mặt sau" class="citizen-id-preview"
+                                             style="max-width: 80px; max-height: 80px; border-radius: 6px; cursor: pointer;"
+                                             onclick="showImageModal(this)">
+                                    </td>
+                                    <td class="action-buttons" style="display: flex; flex-direction: column; gap: 5px;">
+                                        <a th:href="@{/admin/job-applications/mark-as-read(id=${jobApp.id})}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                            <span>Đánh dấu đã đọc</span>
+                                        </a>
+                                        <a th:href="@{/admin/job-applications/approve(id=${jobApp.id})}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-thumbs-up"></i>
+                                            <span>Duyệt CV</span>
+                                        </a>
+                                        <a th:href="@{/admin/job-applications/delete(id=${jobApp.id})}" class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn ứng tuyển này?')">
+                                            <i class="fas fa-trash"></i>
+                                            <span>Xóa</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tất cả đơn -->
+            <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="all-tab">
+                <div class="card shadow mb-4 mt-3">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Tất cả đơn ứng tuyển</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="allTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <!-- <th>ID</th> -->
+                                    <th>Họ tên</th>
+                                    <th>Tuổi</th>
+                                    <th>Giới tính</th>
+                                    <th>Email</th>
+                                    <th>Địa điểm</th>
+                                    <th>Ngày tạo</th>
+                                    <th>Ảnh mặt trước</th>
+                                    <th>Ảnh mặt sau</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${allApplications == null || allApplications.empty}">
+                                    <td colspan="9" class="text-center">Không có đơn ứng tuyển nào</td>
+                                </tr>
+                                <tr th:if="${allApplications != null}" th:each="jobApp : ${allApplications}">
+                                    <!-- <td th:text="${jobApp.id}"></td> -->
+                                    <td th:text="${jobApp.fullName}"></td>
+                                    <td th:text="${jobApp.age}"></td>
+                                    <td th:text="${jobApp.gender}"></td>
+                                    <td th:text="${jobApp.email}"></td>
+                                    <td th:text="${jobApp.location != null ? jobApp.location.name : 'N/A'}"></td>
+                                    <td th:text="${#temporals.format(jobApp.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                    <td>
+                                        <img th:src="@{${jobApp.citizenIdFront}}" alt="Ảnh mặt trước" style="max-width:80px;cursor:pointer" onclick="showImageModal(this)">
+                                    </td>
+                                    <td>
+                                        <img th:src="@{${jobApp.citizenIdBack}}" alt="Ảnh mặt sau" class="citizen-id-preview"
+                                             style="max-width: 80px; max-height: 80px; border-radius: 6px; cursor: pointer;"
+                                             onclick="showImageModal(this)">
+                                    </td>
+                                    <td>
+                                        <span th:if="${jobApp.isApproved}" class="badge badge-success">Đã duyệt</span>
+                                        <span th:if="${jobApp.isRead && !jobApp.isApproved}" class="badge badge-warning">Đã đọc</span>
+                                        <span th:if="${!jobApp.isRead}" class="badge badge-danger">Chưa đọc</span>
+                                    </td>
+                                    <td class="action-buttons" style="display: flex; flex-direction: column; gap: 5px;">
+                                        <a th:if="${!jobApp.isRead}" th:href="@{/admin/job-applications/mark-as-read(id=${jobApp.id})}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                            <span>Đánh dấu đã đọc</span>
+                                        </a>
+                                        <a th:if="${!jobApp.isApproved}" th:href="@{/admin/job-applications/approve(id=${jobApp.id})}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-thumbs-up"></i>
+                                            <span>Duyệt CV</span>
+                                        </a>
+                                        <a th:href="@{/admin/job-applications/delete(id=${jobApp.id})}" class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn ứng tuyển này?')">
+                                            <i class="fas fa-trash"></i>
+                                            <span>Xóa</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    
+    <!-- Page level custom scripts - Cải thiện cách khởi tạo DataTables -->
+    <script>
+        $(document).ready(function() {
+            console.log('Document ready, initializing DataTables...');
+            
+            try {
+                // Đơn giản hóa cách khởi tạo DataTables
+                $('#unreadTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+                    },
+                    "responsive": false, // Thay đổi từ true sang false để tránh xung đột
+                    "order": [[0, 'desc']],
+                    "pageLength": 10
+                });
+                console.log('Unread table initialized successfully');
+                
+                // Khởi tạo DataTable cho bảng tất cả đơn
+                $('#allTable').DataTable({
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+                    },
+                    "responsive": false, // Thay đổi từ true sang false để tránh xung đột
+                    "order": [[0, 'desc']],
+                    "pageLength": 10
+                });
+                console.log('All applications table initialized successfully');
+                
+                // Xử lý chuyển tab
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    console.log('Tab changed to: ' + $(e.target).attr('id'));
+                    // Điều chỉnh lại kích thước bảng khi chuyển tab
+                    $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                });
+                
+            } catch (error) {
+                console.error('Error initializing DataTables:', error);
+            }
+        });
+    </script>
+
+    <!-- Modal hiển thị ảnh lớn -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <img id="modalImage" src="" alt="Ảnh lớn" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        function showImageModal(img) {
+            $('#modalImage').attr('src', img.src);
+            $('#imageModal').modal('show');
+        }
+    </script>
+</section>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

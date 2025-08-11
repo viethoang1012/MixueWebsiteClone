@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/default/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mixue - Kem & Trà Sữa</title>
+
+    <link rel="stylesheet" th:href="@{/default/list-products.css}" href="/default/list-products.css">
+    <link rel="stylesheet" th:href="@{/default/css/home.css}" href="/default/css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<section layout:fragment="main-content">
+    <!-- Poster Quảng Cáo Overlay -->
+    <div class="ad-overlay" id="adOverlay">
+        <div class="ad-container">
+            <img src="/default/images/Lat-Dat-Mixue.webp" alt="Quảng Cáo Mixue">
+            <button class="close-ad" id="closeAd">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="hero-section">
+        <div class="slider">
+            <div class="slide">
+                <img src="/default/images/Mixuebanner4.jpg" alt="Mixue Banner 1">
+            </div>
+            <div class="slide">
+                <img src="/default/images/Mixuebanner1.jpg" alt="Mixue Banner 2">
+            </div>
+            <div class="slide">
+                <img th:src="@{/images/menu1.jpg}"alt="Mixue Banner 3">
+            </div>
+            <div class="slide">
+                <img th:src="@{/images/menu2.jpg}" alt="Mixue Banner 4">
+            </div>
+            <div class="slide">
+                <img th:src="@{/images/menu3.jpg}" alt="Mixue Banner 5">
+            </div>
+            <div class="slide">
+                <img src="/default/images/Mixuebanner2.jpg" alt="Mixue Banner 6">
+            </div>
+            
+            
+            <button class="slider-btn prev-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="slider-btn next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Mixue Vietnam Section -->
+    <section class="mixue-vietnam">
+        <div class="mixue-content">
+            <div class="mixue-text">
+                <h1 class="main-title">Mixue Việt Nam</h1>
+                <p class="description">
+                    Mixue Việt Nam trang cấp nhất thông tin về sản phẩm, kem, trà sữa Mixue, quán Mixue gần đây, Menu Mixue, thông tin tuyển dụng Mixue, nhượng quyền Mixue... Mixue có của hàng hệ thống trên các tỉnh thành tại Việt Nam và Đông Nam Á. Đặt biệt có nhiều cửa hàng tại các thành phố lớn của Việt Nam như Mixue Đà Nẵng, Mixue Hà Nội, Mixue TP HCM
+                </p>
+            </div>
+            <div class="mixue-logo">
+                <img src="/default/images/logo-mixue.png" alt="Mixue Logo">
+            </div>
+        </div>
+        <div class="hero-content">
+            <h1>MIXUE</h1>
+            <p>Khám phá thế giới kem và trà sữa tuyệt hảo. Với công thức độc đáo và nguyên liệu tươi ngon, chúng tôi mang đến những ly đồ uống thơm ngon, mát lạnh cho ngày hè của bạn.</p>
+        </div>
+    </section>
+    
+    <!-- Featured Products Section -->
+    <section class="featured-products">
+        <div class="product-row">
+            <div class="product-image_link">
+                <a href="http://localhost:8080/shop?category=Kem"><img class="product-image_item" src="/default/images/Oc-Que-Mixue.jpg" alt="Kem Tươi"></a>
+            </div>
+            <div class="product-text light">
+                <div class="text-content">
+                    <h2 class="text-content_title">KEM TƯƠI</h2>
+                    <p>Kem tươi mát lạnh với nhiều hương vị hấp dẫn, được làm từ nguyên liệu tự nhiên</p>
+                </div>
+            </div>
+        </div>
+        <div class="product-row reverse">
+            <div class="product-image_link">
+                <a href="http://localhost:8080/shop?category=Tr%C3%A0+S%E1%BB%AFa"><img class="product-image_item" src="/default/images/trasua.jpg" alt="Trà Sữa"></a>
+            </div>
+            <div class="product-text dark">
+                <div class="text-content">
+                    <h2 class="text-content_title">TRÀ SỮA</h2>
+                    <p>Trà sữa thơm ngon với trân châu tươi và topping đa dạng</p>
+                </div>
+            </div>
+        </div>
+    </section>    
+    
+    <!-- Best Sellers Section -->
+    <section class="best-sellers">
+        <h2 class="sellers-text">Sản Phẩm Bán Chạy</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="/default/images/Tra-Sua-Tran-Chau-Pearl-Mixue.jpg" alt="Trà Sữa Truyền Thống" class="product-image"
+                     onerror="this.src='/images/default-drink.jpg'" />
+                <h3>Trà Sữa Truyền Thống</h3>
+                <p>Hương vị truyền thống, quen thuộc</p>
+                <div class="product-actions">
+                    <a th:href="@{/shop}" class="btn btn-order">Đặt Ngay</a>
+                </div>
+            </div>
+    
+            <div class="product-card">
+                <img src="/default/images/Super-Sundae-Dau-Tay.jpg" alt="Kem Dâu" class="product-image"
+                     onerror="this.src='/images/default-drink.jpg'" />
+                <h3>Kem Dâu</h3>
+                <p>Hương vị dâu tươi mát lạnh</p>
+                <div class="product-actions">
+                    <a th:href="@{/shop}" class="btn btn-order">Đặt Ngay</a>
+                </div>
+            </div>
+    
+            <div class="product-card">
+                <img src="/default/images/Tra-Sua-Duong-Chi-Cam-Lo-Mixue.jpg" alt="Trà Sữa Matcha" class="product-image"
+                     onerror="this.src='/images/default-drink.jpg'" />
+                <h3>Trà Sữa Matcha</h3>
+                <p>Vị trà xanh đậm đà, thơm ngon</p>
+                <div class="product-actions">
+                    <a th:href="@{/shop}" class="btn btn-order">Đặt Ngay</a>
+                </div>
+            </div>
+        </div>
+        <h1 class="promo-text">GIẢM GIÁ 50% ĐẾN HẾT THÁNG 7</h1>
+    </section>
+    
+    
+    <!-- Mixue Near Section -->
+    <section class="mixue-near">
+        <h2 class="near-title">Mixue Gần Đây</h2>
+        <div class="near-grid">
+            <div class="near-card" th:each="location : ${locations}"
+                th:onclick="'window.location.href=\'/location/' + ${location.id} + '\''"
+                style="cursor:pointer;">
+                <div class="near-image">
+                    <img th:if="${location.image != null}" th:src="${location.image}" alt="Ảnh" style="width:100%;height:auto;">
+                    <!-- <img th:src="@{'/images/' + ${location.image}}" th:alt="${location.name}" style="width:100%;height:auto;"> -->
+                    <div class="near-tag">MIXUE TUYỂN DỤNG</div>
+                    <div class="near-logo">
+                        <img src="/default/images/logo-mixue.png" alt="Mixue Logo">
+                    </div>
+                </div>
+                <div class="near-content">
+                    <h3 th:text="${location.name}"></h3>
+                    <p th:text="${location.description}"></p>
+                    <!-- Nút XEM NGAY có thể bỏ hoặc để lại, nhưng toàn bộ card đã có thể click -->
+                    <a th:href="@{'/location/' + ${location.id}}" class="near-button">XEM NGAY</a>
+                    <div class="near-info">
+                        <span>Mixue Việt Nam</span>
+                        <span>31/07/2024</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Reviews Section -->
+    <section class="reviews">
+        <h2>Cảm Nhận Khách Hàng Về Mixue</h2>
+        <div class="review-grid">
+            <!-- Hiển thị bình luận đã được duyệt -->
+            <div th:each="review : ${approvedReviews}" class="review-card">
+                <p th:text="${review.content}">Nội dung bình luận</p>
+                <div class="review-stars">
+                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                        <i class="fas fa-star" th:classappend="${i <= review.rating ? '' : 'text-secondary'}"></i>
+                    </span>
+                </div>
+                <div class="reviewer-info">
+                    <div class="reviewer-avatar">
+                        <img th:src="@{${review.product.imageUrl}}" th:alt="${review.product.name}">
+                    </div>
+                    <div>
+                        <div class="reviewer-name" th:text="${review.userName}">Tên người đánh giá</div>
+                        <div class="product-name" th:text="${review.product.name}">Tên sản phẩm</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hiển thị thông báo nếu không có bình luận nào được duyệt -->
+            <div th:if="${#lists.isEmpty(approvedReviews)}" class="no-reviews">
+                <p>Chưa có đánh giá nào được duyệt.</p>
+            </div>
+        </div>
+    </section>
+    
+</section>
+
+<!-- Chatbox Mixue AI -->
+<div id="mixue-chatbox" style="position: fixed; bottom: 24px; right: 24px; width: 350px; max-width: 90vw; z-index: 9999; font-family: Arial, sans-serif;">
+    <div style="background: #e74c3c; color: #fff; padding: 12px 16px; border-radius: 12px 12px 0 0; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+        <span>Trợ lý Mixue AI</span>
+        <button id="mixue-chatbox-close" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">&times;</button>
+    </div>
+    <div id="mixue-chatbox-messages" style="background: #fff; height: 320px; overflow-y: auto; padding: 12px; border: 1px solid #e74c3c; border-top: none;"></div>
+    <div style="display: flex; border: 1px solid #e74c3c; border-top: none; background: #fff; border-radius: 0 0 12px 12px;">
+        <input id="mixue-chatbox-input" type="text" placeholder="Nhập câu hỏi về Mixue..." style="flex: 1; border: none; padding: 10px; outline: none; font-size: 15px;">
+        <button id="mixue-chatbox-send" style="background: #e74c3c; color: #fff; border: none; padding: 0 18px; font-size: 15px; cursor: pointer; border-radius: 0 0 12px 0;">Gửi</button>
+    </div>
+</div>
+
+<script>
+(function() {
+    const chatbox = document.getElementById('mixue-chatbox');
+    const closeBtn = document.getElementById('mixue-chatbox-close');
+    const messages = document.getElementById('mixue-chatbox-messages');
+    const input = document.getElementById('mixue-chatbox-input');
+    const sendBtn = document.getElementById('mixue-chatbox-send');
+
+    // Đóng chatbox
+    closeBtn.onclick = function() { chatbox.style.display = 'none'; };
+
+    // Hiển thị tin nhắn lên chatbox
+    function appendMessage(text, isUser) {
+        const msg = document.createElement('div');
+        msg.style.margin = '8px 0';
+        msg.style.textAlign = isUser ? 'right' : 'left';
+        msg.innerHTML = `<span style="display:inline-block;max-width:80%;padding:8px 12px;border-radius:12px;${isUser ? 'background:#e74c3c;color:#fff;' : 'background:#f1f1f1;color:#222;'}">${text}</span>`;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Gửi câu hỏi tới Gemini
+    async function sendToGemini(question) {
+        appendMessage(question, true);
+        input.value = '';
+        appendMessage('<i>Đang trả lời...</i>', false);
+        try {
+            const res = await fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+            const data = await res.json();
+            messages.removeChild(messages.lastChild);
+            appendMessage(data.answer, false);
+        } catch (e) {
+            messages.removeChild(messages.lastChild);
+            appendMessage('Xin lỗi, có lỗi khi kết nối AI.', false);
+        }
+    }
+
+    // Sự kiện gửi
+    sendBtn.onclick = function() {
+        const question = input.value.trim();
+        if (question) sendToGemini(question);
+    };
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendBtn.onclick();
+    });
+
+    // Lời chào đầu tiên
+    appendMessage('Xin chào! Tôi là trợ lý ảo ChatBox Mixue, bạn cần trợ giúp gì ạ?', false);
+})();
+</script>
+
+<script th:src="@{/default/Javascript/home.js}"></script>
+
+</body>
+</html>
